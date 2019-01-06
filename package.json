@@ -1,6 +1,6 @@
 {
   "name": "chatty",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "eine kleine Chat App welche auf deine Privatsphäre achtet",
   "main": "server.js",
   "scripts": {
@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.3",
+    "md5": "^2.2.1",
+    "mongodb": "^3.1.1",
     "mongoose": "^5.2.3",
     "socket.io": "^2.1.1"
   }

@@ -107,8 +107,7 @@
         $(function(){
             //HTML Objekte abgreifen
             var $logoutBtn = $('#logoutBtn');
-            var key = "Username";
-            var userOfStorage = window.localStorage.getItem(key);
+            var userOfStorage = localStorage.getItem('Benutzername');
             var siteCookies = document.cookie.valueOf();
             
             //Infos einfügen

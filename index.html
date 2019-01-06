@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Chatty</title>
+    <meta name="discription" content="Chatty ist eine kleine Chat App welche auf deine Privatsphäre achtet."
     <link rel="shortcut icon" type="image/x-icon" href="/chatty-logo-bg.ico">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" href="/favicon.png" sizes="96x96">
@@ -40,9 +41,21 @@
             "link": "Mehr über Cookies lernen"
         }
         })});
+
+        //Prüfen ob Benutzer schon eingelogt ist
+        if(localStorage.getItem("Benutzername") != null && localStorage.getItem("Benutzername-ID") != null){
+            var localUser = localStorage.getItem("Benutzername");
+            var localUserID = localStorage.getItem("Benutzername-ID");
+        } else {
+            var localUser = "";
+            var localUserID = "";
+        };
     </script>
     <style>
         #chatView{
+            display: none;
+        }
+        #registerView{
             display: none;
         }
     </style>
@@ -85,28 +98,83 @@
     <!--/.Navbar-->
 
     <!-- Log In View -->
-    <section class="container" id="loginView" style="margin-top: 20vh;">
-        <div class="text-center">
-            <img src="/chatty-logo-obg.png" style="height: 80px;">
-            <h1>Chatty</h1>
-            <p>Chatty ist eine kleine Chat App welche auf deine Privatsphäre schüzt. Wir nutzen nur genau zwei Cookies. Der eine löscht sich automatisch wenn du die Seite neu lädst und der wenn du auf "Log Out" klickst. Trotzdem werden keine von deinen Daten irgendwo auf usneren Servern gespeichert!</p>
-            <strong>Erstelle dir jetzte ein Nutzername und Chatte los</strong>
-            <div class="flex-center mt-4">
-                <form class="md-form flex-center" style="width: 500px;" autocomplete="off" id="userLoginForm">
-                    <label for="userLoginInput">Dein Benutzername</label>
-                    <input type="text" id="userLoginInput" class="form-control"/>
-                    <button type="submit" class="btn btn-indigo"><i class="far fa-arrow-alt-circle-right"></i></button>
+    <section class="container animated fadeInUp" id="loginView" style="margin-top: 20vh;">
+        <div>
+            <div class="text-center">
+                <img src="/chatty-logo-obg.png" style="height: 80px;">
+                <h1>Chatty</h1>
+                <p>Chatty ist eine kleine Chat App welche auf deine Privatsphäre schüzt. Wir nutzen nur genau zwei Cookies. Der eine löscht sich automatisch wenn du die Seite neu lädst und der wenn du auf "Log Out" klickst. Trotzdem werden keine von deinen Daten irgendwo auf usneren Servern gespeichert!</p>
+                <strong>Erstelle dir jetzte ein Nutzername und Chatte los</strong>
+            </div>
+            <div class="mt-4 flex-center">
+                <form class="md-form" style="width: 500px;" autocomplete="off" id="userLoginForm">
+                    <div class="md-form">
+                        <i class="fa fa-envelope prefix grey-text"></i>
+                        <input type="text" id="userInputEmail" class="form-control">
+                        <label for="userInputEmail">Deine Email</label>
+                    </div>
+            
+                    <div class="md-form">
+                        <i class="fa fa-lock prefix grey-text"></i>
+                        <input type="password" id="userInputPwd" class="form-control">
+                        <label for="userInputPwd">Dein Passwort</label>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <div id="errorDisplay"></div>
+                        <button class="btn btn-indigo" type="submit">Login</button>
+                    </div>
+                </form>
+            </div>
+            
+            <a class="flex-center" id="regBtn">Oder Registrieren</a>
+        </div>
+    </section>
+
+    <!-- Regsiter View -->
+    <section class="container animated fadeInUp" id="registerView" style="margin-top: 20vh;">
+        <div>
+            <div class="text-center">
+                <img src="/chatty-logo-obg.png" style="height: 80px;">
+                <h1 class="mt-2">Registriere dich bei Chatty</h1>
+                <p>Hier kannst du dich bei Chatty registrieren</p>
+                <strong>Deine Daten werden nur zum einloggen genutzt</strong>
+            </div>
+            <div class="mt-4 flex-center">
+                <form class="md-form" style="width: 500px;" autocomplete="off" id="userRegForm">
+                    <div class="md-form">
+                        <i class="fa fa-envelope prefix grey-text"></i>
+                        <input type="email" id="userInputEmailReg" class="form-control">
+                        <label for="userInputEmail">Deine Email</label>
+                    </div>
+            
+                    <div class="md-form">
+                        <i class="fa fa-user prefix grey-text"></i>
+                        <input type="text" id="userInputUsername" class="form-control">
+                        <label for="userInputUsername">Dein Benutzername</label>
+                    </div>
+
+                    <div class="md-form">
+                        <i class="fa fa-lock prefix grey-text"></i>
+                        <input type="password" id="userInputPwdReg" class="form-control">
+                        <label for="userInputPwd">Dein Passwort</label>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <div id="errorRegDisplay"></div>
+                        <button class="btn btn-indigo" type="submit">Registrieren</button>
+                    </div>
                 </form>
             </div>
         </div>
-        <small class="fixed-bottom m-3 text-light">Version 1.5.0</small>
+        <a class="flex-center" id="loginBtn">Oder Einloggen</a>
     </section>
 
     <!--Chat View-->
     <section class="container" id="chatView">
         <div class="m-3">
             <!-- Chatnachrichten -->
-            <ul id="chatDisplay" style="margin-top: 75px;"></ul>
+            <div id="chatDisplay" style="margin-top: 75px;"></div>
 
             <!-- Platzhalten Bottom -->
             <div style="height: 90px;" id="bottom"></div>
@@ -114,8 +182,8 @@
         <div class="fixed-bottom bg-light">
             <div class="flex-center">
                 <form class="md-form flex-center" style="width: 500px;" autocomplete="off" id="chatForm">
-                    <label for="chatInput">Deine Nachricht</label>
-                    <input type="text" id="chatInput" class="form-control"/>
+                    <label for="chatInput" class="p-1">Deine Nachricht</label>
+                    <input type="text" id="chatInput" class="p-2 form-control"/>
                     <button type="submit" class="btn btn-indigo"><i class="far fa-arrow-alt-circle-right"></i></button>
                 </form>
             </div>
@@ -133,43 +201,115 @@
             var $chatInput = $('#chatInput');
             var $chatDisplay = $('#chatDisplay');
             var $userLoginForm = $('#userLoginForm');
-            var $userLoginInput = $('#userLoginInput');
+            var $userRegForm = $('#userRegForm');
+            var $userInputEmail = $('#userInputEmail');
+            var $userInputPwd = $('#userInputPwd');
+            var $userInputEmailReg = $('#userInputEmailReg');
+            var $userInputPwdReg = $('#userInputPwdReg');
+            var $userInputUsername = $('#userInputUsername');
             var $loginView = $('#loginView');
             var $chatView = $('#chatView');
             var $logoutBtn = $('#logoutBtn');
-            
-            //Variablen für Loaklen Speicher
-            var key = "Username";
-            var userOfStorage = window.localStorage.getItem(key);
+            var $registerView = $('#registerView');
 
-            //Lokalen Speicher auslesen
-            if(userOfStorage != null){
-                var userOfStorageLagecy = window.localStorage.getItem(key);
-
-                socket.emit('new user', userOfStorageLagecy, function(data){
-                    if(data){
-                        $loginView.hide();
-                        $chatView.show();
-                    }
-                });
-                console.log("User: " + userOfStorageLagecy + " aus Speicher registriert");
+            //Benutzer asu Speicher einloggen
+            if(localUser != "" && localUserID != ""){
+                socket.emit('login user with ID', localUser, localUserID);
+            } else {
+                $chatView.hide();
+                $loginView.show();
             };
 
-            //Erstellen von User wenn nicht schon vorhamdem
+            //Login & Reg Fenster anzeigen
+            $('#regBtn').click(function(e){
+                e.preventDefault();
+
+                $loginView.slideUp();
+                $loginView.hide();
+                $registerView.show();
+            });
+            $('#loginBtn').click(function(e){
+                e.preventDefault();
+
+                $registerView.slideUp();
+                $registerView.hide();
+                $loginView.show();
+            });
+
+            //User einloggen start
             $userLoginForm.submit(function(e){
                 e.preventDefault();
 
-                if($userLoginInput.val() != 0){
-                    socket.emit('new user', $userLoginInput.val(), function(data){
-                        if(data){
-                            $loginView.hide();
-                            $chatView.show();
-                        }
-                    });
-                    console.log("User: " + $userLoginInput.val() + " registriert und gespeichert");
-                    window.localStorage.setItem(key, $userLoginInput.val());
-                    $userLoginInput.val("");
+                if($userInputEmail.val() == "" || $userInputPwd.val() == ""){
+                    $('#errorDisplay').html('<div class="danger-color text-white p-2 animated fadeIn"><strong>Bitte Felder ausfüllen</strong></div>');
+                } else {
+                    socket.emit('login user', $userInputEmail.val(), $userInputPwd.val());
                 };
+
+            });
+
+            //User einloggen Fehler Email
+            socket.on('login user fEmail', function(){
+                $('#errorDisplay').html('<div class="danger-color text-white p-2 animated fadeIn"><strong>Falsche Email</strong></div>');
+            });
+
+            //User einloggen Fehler Passwort
+            socket.on('login user fPwd', function(){
+                $('#errorDisplay').html('<div class="danger-color text-white p-2 animated fadeIn"><strong>Falsches Passwort</strong></div>');
+            });
+
+            //User einloggen erfolgreich
+            socket.on('login user erfolgreich', function(username, userID){
+                $loginView.fadeOut();
+                $loginView.hide();
+                $chatView.fadeIn();
+                localStorage.setItem('Benutzername', username);
+                localUser = username;
+                localStorage.setItem('Benutzername-ID', userID);
+                localUserID = userID;
+                
+                //Funktion zum Auto. Skrollen des Chatts
+                function bottom() {
+                    document.getElementById( 'bottom' ).scrollIntoView();
+                };
+                bottom();
+            });
+
+            //User regestrieren start
+            $userRegForm.submit(function(e){
+                e.preventDefault();
+
+                if($userInputEmailReg.val() == "" || $userInputPwdReg.val() == "" || $userInputUsername.val() == ""){
+                    $('#errorRegDisplay').html('<div class="danger-color text-white p-2 animated fadeIn"><strong>Bitte Felder ausfüllen</strong></div>');
+                } else {
+                    socket.emit('reg user', $userInputEmailReg.val(), $userInputPwdReg.val(), $userInputUsername.val());
+                };
+
+            });
+
+            //User regestrieren Fehler Username
+            socket.on('reg user fUsername', function(){
+                $('#errorRegDisplay').html('<div class="danger-color text-white p-2 animated fadeIn"><strong>Benutzername schon vergeben</strong></div>');
+            });
+
+            //User regestrieren Fehler Email
+            socket.on('reg user fEmail', function(){
+                $('#errorRegDisplay').html('<div class="danger-color text-white p-2 animated fadeIn"><strong>Email schon genutzt</strong></div>');
+            });
+
+            //User regestrieren Erfolgreich
+            socket.on('reg user erfolgreich', function(username){
+                $registerView.fadeOut();
+                $registerView.hide();
+                $chatView.fadeIn();
+                localStorage.setItem('Benutzername', username);
+                localUser = username;
+
+                //Funktion zum Auto. Skrollen des Chatts
+                function bottom() {
+                    document.getElementById( 'bottom' ).scrollIntoView();
+                };
+                bottom();
             });
 
             //Senden von Nachrichten 
@@ -177,21 +317,17 @@
                 e.preventDefault();
 
                 if($chatInput.val() != 0){
-                    socket.emit('send massage', $chatInput.val());
+                    var data = $chatInput.val();
+                    socket.emit('send massage', localUser, localUserID, $chatInput.val());
                     console.log("Gesendet: " + $chatInput.val());
                     $chatInput.val("");
                 };
             });
 
-            //Anzeigen von alten Nachrichten
+            //Laden von alten Nachrichten
             socket.on('load old msg', function(docs){
                 for(var doc of docs){
-                    $chatDisplay.append('<div class="card m-3 p-2"><strong>'+doc.user+'</strong><br><p class="card-text">'+doc.msg+'</p></div>');
-                    //Funktion zum Auto. Skrollen des Chatts
-                    function bottom() {
-                        document.getElementById( 'bottom' ).scrollIntoView();
-                    };
-                    bottom();
+                    $chatDisplay.append('<div class="card m-3 p-2 animated fadeInUp"><strong>'+doc.user+'</strong><br><p class="card-text">'+doc.msg+'</p></div>');
                 };
             });
 
@@ -209,8 +345,7 @@
 
             //Benutzer ausloggen (Speicher löschen)
             $logoutBtn.click(function(){
-                window.localStorage.clear();
-                console.log("Speicher gelöscht");
+                localStorage.clear();
             });
         });
     </script>
