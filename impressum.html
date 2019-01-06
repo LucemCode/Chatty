@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chatty | Impressum</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/chatty-logo-bg.ico">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" href="/favicon.png" sizes="96x96">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.4/css/mdb.min.css" rel="stylesheet">
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Socket.io -->
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <!-- Cookie Banner -->
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
+    <script>
+        window.addEventListener("load", function(){
+        window.cookieconsent.initialise({
+        "palette": {
+            "popup": {
+            "background": "#252e39"
+            },
+            "button": {
+            "background": "#14a7d0"
+            }
+        },
+        "theme": "edgeless",
+        "content": {
+            "message": "Wir verwenden kleine Cookies damit der Chat funktioniert. Diese werden aber wieder gelöscht wenn du die Seite schließt und speichern keine von deinen Daten.",
+            "dismiss": "Klar, verstanden!",
+            "link": "Mehr über Cookies lernen"
+        }
+        })});
+    </script>
+    <style>
+        body {
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <!--Navbar-->
+    <nav class="navbar navbar-expand-lg navbar-dark primary-color fixed-top">
+
+        <div class="container">
+            <!-- Navbar brand -->
+            <a class="navbar-brand" href="/">Chatty</a>
+        
+            <!-- Collapse button -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        
+            <!-- Collapsible content -->
+            <div class="collapse navbar-collapse" id="basicExampleNav">
+        
+                <!-- Links -->
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/impressum">Impressum</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="logoutBtn" href="/">Log Out</a>
+                    </li>
+                </ul>
+                <!-- Links -->
+            </div>
+            <!-- Collapsible content -->
+        </div>
+
+    </nav>
+    <!--/.Navbar-->
+    <div class="container" style="margin-top: 80px;">
+        <div>
+            <h1>Impressum</h1>
+            <br>
+            <strong>Hier fidnest du das Impressum von Chatty</strong>
+            <br>
+            <br>
+            <p>Betrieben wird diese Seite von <br>Pascal Oberbeck<br>Erreichbar unter <a href="mailto:hi@paperlesswork.de">hi@paperlesswork.de</a></p>
+            <br>
+            <h3>Was ist Chatty?</h3>
+            <p>Chatty ist eine kleine Chat App welche Keine von dienen provaten Daten speichert. Wir speichern nur deinen Nutzernamen auf <strong>deinem</strong> Computer. Auf unseren Servern wird nichts gespeichert</p>
+            <br>
+            <h3>Welche Daten sind zurzeit von Chatty gespeichert?</h3>
+            <h4>Cookies</h2>
+            <p id="cookieItem"></p>
+            <br>
+            <h4>Lokaler Speicher</h4>
+            <p id="localStoragItem"></p>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            //HTML Objekte abgreifen
+            var $logoutBtn = $('#logoutBtn');
+            var key = "Username";
+            var userOfStorage = window.localStorage.getItem(key);
+            var siteCookies = document.cookie.valueOf();
+            
+            //Infos einfügen
+            $('#cookieItem').html(siteCookies + '<br><strong>Dieser Cookie ist für unser Cookie Banner und merkt sich, dass du damit einverstanden bist. Wir bracuhen das wegen den EU bestimmungen.</strong>');
+
+            if(userOfStorage != null){
+                $('#localStoragItem').html("Nutzername: " + userOfStorage + '<br><strong>Das ist dein Benutzername welchen wir nur auf deinem Rechner Speichern.</strong>');
+            };
+
+            if($('#localStoragItem').html() == ""){
+                $('#localStoragItem').html("Lokaler Speicher ist leer.")
+            };
+
+            if($('#cookieItem').html() == ""){
+                $('#cookieItem').html("Keine Cookies gespeichert.")
+            };
+
+            //Benutzer ausloggen (Speicher löschen)
+            $logoutBtn.click(function(){
+                window.localStorage.clear();
+                console.log("Speicher gelöscht");
+            });
+        });
+    </script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.4/js/mdb.min.js"></script>
+</body>
+</html>

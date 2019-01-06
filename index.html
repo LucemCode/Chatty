@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chatty</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/chatty-logo-bg.ico">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" href="/favicon.png" sizes="96x96">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.4/css/mdb.min.css" rel="stylesheet">
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Socket.io -->
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <!-- Cookie Banner -->
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
+    <script>
+        window.addEventListener("load", function(){
+        window.cookieconsent.initialise({
+        "palette": {
+            "popup": {
+            "background": "#252e39"
+            },
+            "button": {
+            "background": "#14a7d0"
+            }
+        },
+        "theme": "edgeless",
+        "content": {
+            "message": "Wir verwenden kleine Cookies damit der Chat funktioniert. Diese werden aber wieder gelöscht wenn du die Seite schließt und speichern keine von deinen Daten.",
+            "dismiss": "Klar, verstanden!",
+            "link": "Mehr über Cookies lernen"
+        }
+        })});
+    </script>
+    <style>
+        #chatView{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!--Navbar-->
+    <nav class="navbar navbar-expand-lg navbar-dark primary-color fixed-top">
+
+        <div class="container">
+            <!-- Navbar brand -->
+            <a class="navbar-brand" href="/">Chatty</a>
+        
+            <!-- Collapse button -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        
+            <!-- Collapsible content -->
+            <div class="collapse navbar-collapse" id="basicExampleNav">
+        
+                <!-- Links -->
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/impressum">Impressum</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="logoutBtn" href="/">Log Out</a>
+                    </li>
+                </ul>
+                <!-- Links -->
+            </div>
+            <!-- Collapsible content -->
+        </div>
+
+    </nav>
+    <!--/.Navbar-->
+
+    <!-- Log In View -->
+    <section class="container" id="loginView" style="margin-top: 20vh;">
+        <div class="text-center">
+            <img src="/chatty-logo-obg.png" style="height: 80px;">
+            <h1>Chatty</h1>
+            <p>Chatty ist eine kleine Chat App welche auf deine Privatsphäre schüzt. Wir nutzen nur genau zwei Cookies. Der eine löscht sich automatisch wenn du die Seite neu lädst und der wenn du auf "Log Out" klickst. Trotzdem werden keine von deinen Daten irgendwo auf usneren Servern gespeichert!</p>
+            <strong>Erstelle dir jetzte ein Nutzername und Chatte los</strong>
+            <div class="flex-center mt-4">
+                <form class="md-form flex-center" style="width: 500px;" autocomplete="off" id="userLoginForm">
+                    <label for="userLoginInput">Dein Benutzername</label>
+                    <input type="text" id="userLoginInput" class="form-control"/>
+                    <button type="submit" class="btn btn-indigo"><i class="far fa-arrow-alt-circle-right"></i></button>
+                </form>
+            </div>
+        </div>
+        <small class="fixed-bottom m-3 text-light">Version 1.5.0</small>
+    </section>
+
+    <!--Chat View-->
+    <section class="container" id="chatView">
+        <div class="m-3">
+            <!-- Chatnachrichten -->
+            <ul id="chatDisplay" style="margin-top: 75px;"></ul>
+
+            <!-- Platzhalten Bottom -->
+            <div style="height: 90px;" id="bottom"></div>
+        </div>
+        <div class="fixed-bottom bg-light">
+            <div class="flex-center">
+                <form class="md-form flex-center" style="width: 500px;" autocomplete="off" id="chatForm">
+                    <label for="chatInput">Deine Nachricht</label>
+                    <input type="text" id="chatInput" class="form-control"/>
+                    <button type="submit" class="btn btn-indigo"><i class="far fa-arrow-alt-circle-right"></i></button>
+                </form>
+            </div>
+        </div>    
+    </section>
+
+
+    <script>
+       $(function(){
+            //Init von Socket.io
+            var socket = io.connect();
+
+            //Erfassen der HTML Elemente
+            var $chatForm = $('#chatForm');
+            var $chatInput = $('#chatInput');
+            var $chatDisplay = $('#chatDisplay');
+            var $userLoginForm = $('#userLoginForm');
+            var $userLoginInput = $('#userLoginInput');
+            var $loginView = $('#loginView');
+            var $chatView = $('#chatView');
+            var $logoutBtn = $('#logoutBtn');
+            
+            //Variablen für Loaklen Speicher
+            var key = "Username";
+            var userOfStorage = window.localStorage.getItem(key);
+
+            //Lokalen Speicher auslesen
+            if(userOfStorage != null){
+                var userOfStorageLagecy = window.localStorage.getItem(key);
+
+                socket.emit('new user', userOfStorageLagecy, function(data){
+                    if(data){
+                        $loginView.hide();
+                        $chatView.show();
+                    }
+                });
+                console.log("User: " + userOfStorageLagecy + " aus Speicher registriert");
+            };
+
+            //Erstellen von User wenn nicht schon vorhamdem
+            $userLoginForm.submit(function(e){
+                e.preventDefault();
+
+                if($userLoginInput.val() != 0){
+                    socket.emit('new user', $userLoginInput.val(), function(data){
+                        if(data){
+                            $loginView.hide();
+                            $chatView.show();
+                        }
+                    });
+                    console.log("User: " + $userLoginInput.val() + " registriert und gespeichert");
+                    window.localStorage.setItem(key, $userLoginInput.val());
+                    $userLoginInput.val("");
+                };
+            });
+
+            //Senden von Nachrichten 
+            $chatForm.submit(function(e){
+                e.preventDefault();
+
+                if($chatInput.val() != 0){
+                    socket.emit('send massage', $chatInput.val());
+                    console.log("Gesendet: " + $chatInput.val());
+                    $chatInput.val("");
+                };
+            });
+
+            //Anzeigen von alten Nachrichten
+            socket.on('load old msg', function(docs){
+                for(var doc of docs){
+                    $chatDisplay.append('<div class="card m-3 p-2"><strong>'+doc.user+'</strong><br><p class="card-text">'+doc.msg+'</p></div>');
+                    //Funktion zum Auto. Skrollen des Chatts
+                    function bottom() {
+                        document.getElementById( 'bottom' ).scrollIntoView();
+                    };
+                    bottom();
+                };
+            });
+
+
+            //Anzeigen von neuen Nachrichten
+            socket.on('new massage', function(data){
+                $chatDisplay.append('<div class="card m-3 p-2"><strong>'+data.user+'</strong><br><p class="card-text">'+data.msg+'</p></div>');
+
+                //Funktion zum Auto. Skrollen des Chatts
+                function bottom() {
+                    document.getElementById( 'bottom' ).scrollIntoView();
+                };
+                bottom();
+            });
+
+            //Benutzer ausloggen (Speicher löschen)
+            $logoutBtn.click(function(){
+                window.localStorage.clear();
+                console.log("Speicher gelöscht");
+            });
+        });
+    </script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.4/js/mdb.min.js"></script>
+</body>
+</html>
