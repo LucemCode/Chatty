@@ -1,5 +1,5 @@
 "use strict"
-//Server config
+//Imports
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
@@ -8,32 +8,40 @@ var mongoose = require('mongoose');
 var md5 = require('md5');
 
 //MongoDB Verbindung
-mongoose.connect('mongodb://localhost:27017/chatty', {useNewUrlParser: true}, function(err){
-    if(err) throw err;
-    else console.log("Verbindung zur Chatty DB hergestellt");
-});
+let dbUrl = "mongodb://localhost:27017/chatty"
+let dbConnect = async function(dbUrl) {
+    try {
+        await mongoose.connect(dbUrl, {useNewUrlParser: true})
+        console.log("Verbindung zur DB hergestellt")
+    } catch (err) {
+        console.log(err)
+    }
+}
+dbConnect(dbUrl);
 
-var chatShema = mongoose.Schema({
+// Chat Schema
+var chatSchema = mongoose.Schema({
     user: String,
     userID: String,
     msg: String,
     timeStamp: {type: Date, default: Date.now}
 });
-var chatSave = mongoose.model('Massage', chatShema);
+var chatSave = mongoose.model('Massage', chatSchema);
 
-var userShema = mongoose.Schema({
+// User Schema
+var userSchema = mongoose.Schema({
     username: String,
     email: String,
     pwd: String
 });
-var userDB = mongoose.model('User', userShema);
+var userDB = mongoose.model('User', userSchema);
 
 //Server status
 let port = 4000;
 server.listen(port);
 console.log("Server ist online auf Port " + port +"...");
 
-//Anfragen hanlder
+// Express 
 app.use(express.static('public'));
 
 app.get("/", function(req, res){
@@ -44,11 +52,11 @@ app.get("/impressum", function(req, res){
     res.sendFile(__dirname + "/impressum.html");
 });
 
-//Chatty Arrys
+//Chat Arrys
 let user = [];
 let connections = [];
 
-//Socket handler
+//Socket.io
 io.sockets.on('connection', function(socket){
     //Verbindungen herstellen
     connections.push(socket);
@@ -144,5 +152,4 @@ io.sockets.on('connection', function(socket){
             console.log("Nachricht gespeichert");
         });
     });
-
 });

@@ -50,20 +50,16 @@
 <body>
     <!--Navbar-->
     <nav class="navbar navbar-expand-lg navbar-dark primary-color fixed-top">
-
         <div class="container">
             <!-- Navbar brand -->
-            <a class="navbar-brand" href="/">Chatty</a>
-        
+            <a class="navbar-brand" href="/">Chatty</a>  
             <!-- Collapse button -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav"
                 aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
-            </button>
-        
+            </button>       
             <!-- Collapsible content -->
-            <div class="collapse navbar-collapse" id="basicExampleNav">
-        
+            <div class="collapse navbar-collapse" id="basicExampleNav">       
                 <!-- Links -->
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
@@ -80,20 +76,15 @@
             </div>
             <!-- Collapsible content -->
         </div>
-
     </nav>
     <!--/.Navbar-->
     <div class="container" style="margin-top: 80px;">
         <div>
             <h1>Impressum</h1>
             <br>
-            <strong>Hier fidnest du das Impressum von Chatty</strong>
-            <br>
-            <br>
-            <p>Betrieben wird diese Seite von <br>Pascal Oberbeck<br>Erreichbar unter <a href="mailto:hi@paperlesswork.de">hi@paperlesswork.de</a></p>
             <br>
             <h3>Was ist Chatty?</h3>
-            <p>Chatty ist eine kleine Chat App welche Keine von dienen provaten Daten speichert. Wir speichern nur deinen Nutzernamen auf <strong>deinem</strong> Computer. Auf unseren Servern wird nichts gespeichert</p>
+            <p>Chatty ist eine kleine Chat App.</p>
             <br>
             <h3>Welche Daten sind zurzeit von Chatty gespeichert?</h3>
             <h4>Cookies</h2>
@@ -109,7 +100,7 @@
             var $logoutBtn = $('#logoutBtn');
             var userOfStorage = localStorage.getItem('Benutzername');
             var siteCookies = document.cookie.valueOf();
-            
+           
             //Infos einfügen
             $('#cookieItem').html(siteCookies + '<br><strong>Dieser Cookie ist für unser Cookie Banner und merkt sich, dass du damit einverstanden bist. Wir bracuhen das wegen den EU bestimmungen.</strong>');
 
@@ -132,6 +123,7 @@
             });
         });
     </script>
+
     <!-- Bootstrap tooltips -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
     <!-- Bootstrap core JavaScript -->

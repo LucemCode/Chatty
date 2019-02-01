@@ -1,9 +1,10 @@
 {
   "name": "chatty",
   "version": "2.0.0",
-  "description": "eine kleine Chat App welche auf deine Privatsphäre achtet",
+  "description": "Eine kleine Chat App",
   "main": "server.js",
   "scripts": {
+    "start": "node server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Pascal Oberbeck",
